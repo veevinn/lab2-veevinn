@@ -68,10 +68,123 @@ void Initialize() {
 }
 
 void decode(char* code) {
-	if (strcmp(code,".") == 0) {
+	if (strcmp(code,".-") == 0) {
+		sprintf(answer, "A");
+	}
+	else if (strcmp(code,"-...") == 0) {
+		sprintf(answer, "B");
+	}
+	else if (strcmp(code,"-.-.") == 0) {
+		sprintf(answer, "C");
+	}
+	else if (strcmp(code,"-..") == 0) {
+		sprintf(answer, "D");
+	}
+	else if (strcmp(code,".") == 0) {
 		sprintf(answer, "E");
 	}
+	else if (strcmp(code,"..-.") == 0) {
+		sprintf(answer, "F");
+	}
+	else if (strcmp(code,"--.") == 0) {
+		sprintf(answer, "G");
+	}
+	else if (strcmp(code,"....") == 0) {
+		sprintf(answer, "H");
+	}
+	else if (strcmp(code,"..") == 0) {
+		sprintf(answer, "I");
+	}
+	else if (strcmp(code,".---") == 0) {
+		sprintf(answer, "J");
+	}
+	else if (strcmp(code,"-.-") == 0) {
+		sprintf(answer, "K");
+	}
+	else if (strcmp(code,".-..") == 0) {
+		sprintf(answer, "L");
+	}
+	else if (strcmp(code,"--") == 0) {
+		sprintf(answer, "M");
+	}
+	else if (strcmp(code,"-.") == 0) {
+		sprintf(answer, "N");
+	}
+	else if (strcmp(code,"---") == 0) {
+		sprintf(answer, "O");
+	}
+	else if (strcmp(code,".--.") == 0) {
+		sprintf(answer, "P");
+	}
+	else if (strcmp(code,"--.-") == 0) {
+		sprintf(answer, "Q");
+	}
+	else if (strcmp(code,".-.") == 0) {
+		sprintf(answer, "R");
+	}
+	else if (strcmp(code,"...") == 0) {
+		sprintf(answer, "S");
+	}
+	else if (strcmp(code,"-") == 0) {
+		sprintf(answer, "T");
+	}
+	else if (strcmp(code,"..-") == 0) {
+		sprintf(answer, "U");
+	}
+	else if (strcmp(code,"...-") == 0) {
+		sprintf(answer, "V");
+	}
+	else if (strcmp(code,".--") == 0) {
+		sprintf(answer, "W");
+	}
+	else if (strcmp(code,"-..-") == 0) {
+		sprintf(answer, "X");
+	}
+	else if (strcmp(code,"-.--") == 0) {
+		sprintf(answer, "Y");
+	}
+	else if (strcmp(code,"--..") == 0) {
+		sprintf(answer, "Z");
+	}
+	else if (strcmp(code,".----") == 0) {
+		sprintf(answer, "1");
+	}
+	else if (strcmp(code,"..---") == 0) {
+		sprintf(answer, "2");
+	}
+	else if (strcmp(code,"...--") == 0) {
+		sprintf(answer, "3");
+	}
+	else if (strcmp(code,"....-") == 0) {
+		sprintf(answer, "4");
+	}
+	else if (strcmp(code,".....") == 0) {
+		sprintf(answer, "5");
+	}
+	else if (strcmp(code,"-....") == 0) {
+		sprintf(answer, "6");
+	}
+	else if (strcmp(code,"--...") == 0) {
+		sprintf(answer, "7");
+	}
+	else if (strcmp(code,"---..") == 0) {
+		sprintf(answer, "8");
+	}
+	else if (strcmp(code,"----.") == 0) {
+		sprintf(answer, "9");
+	}
+	else if (strcmp(code,"----") == 0) {
+		sprintf(answer, "0");
+	}
 }
+
+void reset(char* input) {
+	for (int i = 0; i < 6; i++) {
+		input[i] = '\0';
+	}
+	
+}
+
 ISR(TIMER1_CAPT_vect){
 
 	TIFR1 |= (1<<ICF1);
@@ -85,11 +198,13 @@ ISR(TIMER1_CAPT_vect){
 			sprintf(String, " ");
 			UART_putstring(String);
 			
+			//UART_putstring(code);
 			
 			decode(code);
-			code[0] = '\0';
+			reset(code);
 			count = 0;
 			UART_putstring(answer);
+			reset(answer);
 					
 		}
 		PORTB &= ~(1<<PORTB2);
@@ -147,3 +262,4 @@ int main(void)
 
 	while(1);
 }
+
