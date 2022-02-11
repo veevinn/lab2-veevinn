@@ -36,10 +36,11 @@ void Initialize() {
 
 	
 	cli();
-	
+	// initalize times to 0
 	TCCR1B = 0;
 	TCCR1A = 0;
-
+	
+	// set input and output pins
 	DDRB |= (1<<DDB5);
 	DDRB |= (1<<DDB1);
 	DDRB |= (1<<DDB2);
@@ -47,10 +48,12 @@ void Initialize() {
 	DDRB &= ~(1<<DDB0);
 	DDRD &= ~(1<<DDD7);
 	
+	// prescale clock by 256
 	TCCR1B &= ~(1<<CS10);
 	TCCR1B &= ~(1<<CS11);
 	TCCR1B |= (1<<CS12);
 	
+	//interrupt initialization for rising edge + overflow
 	TCCR1B |= (1<<ICES1);
 	
 	TCCR1A &= ~(1<<WGM10);
@@ -177,7 +180,7 @@ void decode(char* code) {
 		sprintf(answer, "0");
 	}
 }
-
+// reset string after printing letter
 void reset(char* input) {
 	for (int i = 0; i < 6; i++) {
 		input[i] = '\0';
@@ -186,20 +189,20 @@ void reset(char* input) {
 }
 
 ISR(TIMER1_CAPT_vect){
-
+	// clear flag
 	TIFR1 |= (1<<ICF1);
 	
 	if (falling) {
 		
 		rising_edge = ICR1;
 		falling = 0;
-		
+		// detect space
 		if ((overflow* 65536 + rising_edge - falling_edge) >= 25000) {
 			sprintf(String, " ");
 			UART_putstring(String);
 			
 			//UART_putstring(code);
-			
+			// print out letter corresponding to morse 
 			decode(code);
 			reset(code);
 			count = 0;
@@ -212,10 +215,12 @@ ISR(TIMER1_CAPT_vect){
  
 	}
 	else {
+		//measure period
 		falling_edge = ICR1;			
 		period = (overflow * 65536) + falling_edge - rising_edge;	
 		falling = 1;	
 		
+		// record DOT + Turn on LED
 		if ((period >= 1875) && (period < 12500)) {
 			PORTB |= (1<<PORTB1);
 			PORTB &= ~(1<<PORTB2);
@@ -226,6 +231,7 @@ ISR(TIMER1_CAPT_vect){
 			count++;
 			
 		}
+		//record dash + Turn on LED
 		else if (period >= 12500) {
 			PORTB |= (1<<PORTB2);
 			PORTB &= ~(1<<PORTB1);
@@ -250,7 +256,7 @@ ISR(TIMER1_CAPT_vect){
 	
 	TCCR1B ^= (1<<ICES1);
 }
-
+// Overflow counter
 ISR(TIMER1_OVF_vect){
 	overflow++;
 }
